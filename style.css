@@ -9,7 +9,7 @@ html, body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background-color: #ffffff; /* خلفية بيضاء نقية */
+    background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     overscroll-behavior-y: none;
     -webkit-touch-callout: none;
@@ -58,11 +58,10 @@ html, body {
     margin-bottom: 0;
 }
 
-/* تمديد الصورة لملء الشاشة بالكامل بدون أي فراغات */
 .page-slide img {
     width: 100%;
     height: 100%;
-    object-fit: fill; /* تمدد الصفحة لملء الشاشة عرضاً وارتفاعاً */
+    object-fit: fill;
     pointer-events: none;
     user-select: none;
 }
@@ -89,17 +88,17 @@ html, body {
 
 .top-bar, .bottom-bar {
     pointer-events: auto;
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(18, 18, 18, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 14px;
     padding: 10px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #1e293b;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    color: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 .top-bar {
@@ -109,13 +108,13 @@ html, body {
 .control-btn {
     background: transparent;
     border: none;
-    color: #1e293b;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 6px 8px;
     border-radius: 8px;
     white-space: nowrap;
@@ -123,7 +122,7 @@ html, body {
 }
 
 .control-btn:active {
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .search-jump-box {
@@ -135,10 +134,10 @@ html, body {
 }
 
 .search-jump-box input {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 8px;
-    color: #0f172a;
+    color: #ffffff;
     padding: 6px 4px;
     width: 100%;
     min-width: 105px;
@@ -148,8 +147,8 @@ html, body {
 }
 
 .search-jump-box button {
-    background: #0d9488;
-    color: #fff;
+    background: #2563eb;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     padding: 6px 10px;
@@ -162,8 +161,7 @@ html, body {
 .bottom-bar {
     justify-content: center;
     font-size: 13px;
-    font-weight: 600;
-    color: #334155;
+    color: #e4e4e7;
     max-width: 160px;
     margin: 0 auto;
 }
@@ -173,15 +171,15 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(15, 23, 42, 0.94);
     backdrop-filter: blur(8px);
-    color: #0f172a;
+    color: #f8fafc;
     padding: 14px 28px;
     border-radius: 30px;
     font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     z-index: 2000;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -198,8 +196,8 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
     z-index: 3000;
     display: flex;
     align-items: center;
@@ -214,15 +212,15 @@ html, body {
 }
 
 .modal-content {
-    background: #ffffff;
+    background: #18181b;
     width: 100%;
     max-width: 480px;
     height: 80vh;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     overflow: hidden;
 }
 
@@ -231,21 +229,21 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #e2e8f0;
-    color: #0f172a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 .close-btn {
     background: none;
     border: none;
-    color: #64748b;
+    color: #a1a1aa;
     font-size: 26px;
     cursor: pointer;
 }
 
 .modal-tabs {
     display: flex;
-    background: #f1f5f9;
+    background: #27272a;
     padding: 6px;
     gap: 6px;
 }
@@ -254,7 +252,7 @@ html, body {
     flex: 1;
     background: transparent;
     border: none;
-    color: #64748b;
+    color: #a1a1aa;
     padding: 8px;
     border-radius: 8px;
     font-size: 14px;
@@ -264,23 +262,22 @@ html, body {
 }
 
 .tab-btn.active {
-    background: #ffffff;
-    color: #0f172a;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    background: #3f3f46;
+    color: #ffffff;
 }
 
 .modal-search {
     padding: 12px 16px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .modal-search input {
     width: 100%;
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
+    background: #27272a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     padding: 10px 14px;
-    color: #0f172a;
+    color: #ffffff;
     outline: none;
     font-size: 14px;
 }
@@ -304,19 +301,18 @@ html, body {
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    border-bottom: 1px solid #f1f5f9;
-    color: #1e293b;
-    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
     cursor: pointer;
     border-radius: 8px;
     transition: background 0.2s;
 }
 
 .index-item:hover {
-    background: #f1f5f9;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .index-item .page-num {
-    color: #0d9488;
+    color: #38bdf8;
     font-weight: 600;
 }
