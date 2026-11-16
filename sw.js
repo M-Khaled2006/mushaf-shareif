@@ -1,4 +1,7 @@
-const CACHE_NAME = 'quran-pwa-v8';
+const CACHE_NAME = 'quran-pwa-v11';
+const TOTAL_PAGES = 604;
+
+// تجهيز قائمة بجميع ملفات التطبيق + الـ 604 صورة
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -8,6 +11,11 @@ const ASSETS_TO_CACHE = [
   './icon.png'
 ];
 
+for (let i = 1; i <= TOTAL_PAGES; i++) {
+  ASSETS_TO_CACHE.push(`./Pages/q (${i}).jpg`);
+}
+
+// إجبار المتصفح على تحميل وحفظ الـ 604 صورة كلها قبل إتمام التثبيت
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -31,24 +39,10 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// تخزين كل صفحة يتم فتحها أو تحميلها تلقائياً للعمل بدون إنترنت
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      }).catch(() => {
-        // في حالة عدم وجود إنترنت وعدم تحميل الصفحة مسبقاً
-      });
+      return cachedResponse || fetch(event.request);
     })
   );
 });

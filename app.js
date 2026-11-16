@@ -240,12 +240,14 @@ function updateCurrentPage(pageNum, showNotification = false) {
         pageIndicator.textContent = `الصفحة: ${pageNum} / ${CONFIG.totalPages}`;
         
         const currentJuz = getJuzByPage(pageNum);
-        if (showNotification || lastJuzNum !== currentJuz.juz) {
-            lastJuzNum = currentJuz.juz;
-            if (showNotification) {
-                showJuzToast(currentJuz.name);
-            }
+        const isJuzBoundary = JUZ_DATA.some(j => j.page === pageNum);
+
+        if (showNotification || (isJuzBoundary && lastJuzNum !== null && lastJuzNum !== currentJuz.juz)) {
+            showJuzToast(currentJuz.name);
         }
+        lastJuzNum = currentJuz.juz;
+    
+    
     }
 }
 
@@ -368,20 +370,5 @@ function populateIndex() {
         });
         juzListEl.appendChild(item);
     });
-    // تحميل وحفظ جميع صفحات المصحف في الخلفية للعمل بدون إنترنت
-function preloadAllPagesForOffline() {
-    let page = 1;
-    const interval = setInterval(() => {
-        if (page > CONFIG.totalPages) {
-            clearInterval(interval);
-            return;
-        }
-        fetch(`${CONFIG.imageFolder}/q (${page})${CONFIG.imageExt}`).catch(() => {});
-        page++;
-    }, 300);
-}
-window.addEventListener('load', () => {
-    setTimeout(preloadAllPagesForOffline, 3000);
-});
 
 }
