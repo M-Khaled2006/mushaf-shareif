@@ -368,4 +368,20 @@ function populateIndex() {
         });
         juzListEl.appendChild(item);
     });
+    // تحميل وحفظ جميع صفحات المصحف في الخلفية للعمل بدون إنترنت
+function preloadAllPagesForOffline() {
+    let page = 1;
+    const interval = setInterval(() => {
+        if (page > CONFIG.totalPages) {
+            clearInterval(interval);
+            return;
+        }
+        fetch(`${CONFIG.imageFolder}/q (${page})${CONFIG.imageExt}`).catch(() => {});
+        page++;
+    }, 300);
+}
+window.addEventListener('load', () => {
+    setTimeout(preloadAllPagesForOffline, 3000);
+});
+
 }
