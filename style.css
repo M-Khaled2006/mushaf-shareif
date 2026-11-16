@@ -87,24 +87,9 @@ html, body {
     opacity: 0;
     pointer-events: none;
 }
-
-.top-bar, .bottom-bar {
-    pointer-events: auto;
-    background: rgba(18, 18, 18, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #fff;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-}
-
 .top-bar {
-    gap: 10px;
+    gap: 6px;
+    padding: 10px 12px;
 }
 
 .control-btn {
@@ -114,11 +99,12 @@ html, body {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 14px;
+    gap: 5px;
+    font-size: 13px;
     font-weight: 500;
-    padding: 6px 10px;
+    padding: 6px 8px;
     border-radius: 8px;
+    white-space: nowrap;
     transition: background 0.2s;
 }
 
@@ -128,7 +114,10 @@ html, body {
 
 .search-jump-box {
     display: flex;
-    gap: 6px;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
 }
 
 .search-jump-box input {
@@ -136,9 +125,10 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     color: #fff;
-    padding: 6px 10px;
-    width: 110px;
-    font-size: 13px;
+    padding: 6px 8px;
+    width: 100%;
+    min-width: 115px;
+    font-size: 12px;
     text-align: center;
     outline: none;
 }
@@ -148,11 +138,13 @@ html, body {
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 6px 10px;
+    font-size: 12px;
     cursor: pointer;
     font-weight: 600;
+    white-space: nowrap;
 }
+
 
 .bottom-bar {
     justify-content: center;
