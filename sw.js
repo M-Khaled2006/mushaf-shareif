@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-pwa-v13';
+const CACHE_NAME = 'quran-pwa-v14';
 const TOTAL_PAGES = 604;
 
 // تجهيز قائمة بجميع ملفات التطبيق + الـ 604 صورة
