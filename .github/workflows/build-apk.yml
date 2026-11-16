@@ -16,14 +16,18 @@ jobs:
           node-version: 22
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install @capacitor/assets
 
       - name: Prepare Web Files and Android Project
         run: |
-          rm -rf android www
-          mkdir -p www
+          rm -rf android www assets
+          mkdir -p www assets
+          cp icon.png assets/logo.png
           cp -r Pages index.html style.css app.js manifest.json sw.js icon.png www/
           npx cap add android
+          npx capacitor-assets generate --android
           npx cap sync android
 
       - name: Setup Java JDK

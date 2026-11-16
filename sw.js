@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-pwa-v20';
+const CACHE_NAME = 'quran-pwa-v21';
 const TOTAL_PAGES = 604;
 
 const CORE_ASSETS = [
