@@ -145,12 +145,13 @@ const SURAHS_DATA = [
     { number: 105, name: "الفيل", page: 601 },
     { number: 106, name: "قريش", page: 602 },
     { number: 107, name: "الماعون", page: 602 },
-    { number: 108, name: "الكافرون", page: 602 },
-    { number: 109, name: "النصر", page: 603 },
-    { number: 110, name: "المسد", page: 603 },
-    { number: 111, name: "الإخلاص", page: 604 },
-    { number: 112, name: "الفلق", page: 604 },
-    { number: 113, name: "الناس", page: 604 }
+    { number: 108, name: "الكوثر", page: 602 },
+    { number: 109, name: "الكافرون", page: 603 },
+    { number: 110, name: "النصر", page: 603 },
+    { number: 111, name: "المسد", page: 603 },
+    { number: 112, name: "الإخلاص", page: 604 },
+    { number: 113, name: "الفلق", page: 604 },
+    { number: 114, name: "الناس", page: 604 }
 ];
 
 let currentState = {

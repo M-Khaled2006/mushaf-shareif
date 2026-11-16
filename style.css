@@ -27,7 +27,7 @@ html, body {
     overflow-x: scroll;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    direction: ltr;
+    direction: rtl;
 }
 
 #reader-container.horizontal-mode .page-slide {
