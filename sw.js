@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-pwa-v1';
+const CACHE_NAME = 'quran-pwa-v4';
 const ASSETS_TO_CACHE = [
   './index.html',
   './style.css',
