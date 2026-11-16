@@ -372,3 +372,27 @@ function populateIndex() {
     });
 
 }
+// دعم التكبير بالنقر المزدوج (Double Tap)
+let lastTapTime = 0;
+readerContainer.addEventListener('touchend', (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    if (tapLength < 300 && tapLength > 0) {
+        const img = e.target.closest('.page-slide')?.querySelector('img');
+        if (img) {
+            if (img.style.transform === 'scale(1.8)') {
+                img.style.transform = 'scale(1)';
+                img.style.transformOrigin = 'center center';
+            } else {
+                const rect = img.getBoundingClientRect();
+                const x = ((e.changedTouches[0].clientX - rect.left) / rect.width) * 100;
+                const y = ((e.changedTouches[0].clientY - rect.top) / rect.height) * 100;
+                img.style.transformOrigin = `${x}% ${y}%`;
+                img.style.transform = 'scale(1.8)';
+            }
+        }
+        e.preventDefault();
+    }
+    lastTapTime = currentTime;
+});
