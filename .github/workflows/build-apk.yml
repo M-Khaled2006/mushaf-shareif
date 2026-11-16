@@ -18,11 +18,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Update Capacitor Android
+        run: |
+          mkdir -p www
+          npx cap update android
+
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Build Offline APK
         working-directory: android
