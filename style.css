@@ -24,10 +24,12 @@ html, body {
 
 #reader-container.horizontal-mode {
     display: flex;
+    flex-direction: row-reverse;
+    direction: ltr;
     overflow-x: scroll;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    flex-direction: row-reverse;
+
 }
 
 #reader-container.horizontal-mode .page-slide {
