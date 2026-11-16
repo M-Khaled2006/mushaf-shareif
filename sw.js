@@ -1,8 +1,7 @@
-const CACHE_NAME = 'quran-pwa-v14';
+const CACHE_NAME = 'quran-pwa-v15';
 const TOTAL_PAGES = 604;
 
-// تجهيز قائمة بجميع ملفات التطبيق + الـ 604 صورة
-const ASSETS_TO_CACHE = [
+const CORE_ASSETS = [
   './',
   './index.html',
   './style.css',
@@ -11,15 +10,27 @@ const ASSETS_TO_CACHE = [
   './icon.png'
 ];
 
-for (let i = 1; i <= TOTAL_PAGES; i++) {
-  ASSETS_TO_CACHE.push(`./Pages/q (${i}).jpg`);
-}
-
-// إجبار المتصفح على تحميل وحفظ الـ 604 صورة كلها قبل إتمام التثبيت
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await cache.addAll(CORE_ASSETS);
+      
+      // تحميل وحفظ الـ 604 صورة بالكامل قبل إتمام التثبيت على دفعات سريعة
+      const batchSize = 20;
+      for (let i = 1; i <= TOTAL_PAGES; i += batchSize) {
+        const batch = [];
+        for (let j = i; j < i + batchSize && j <= TOTAL_PAGES; j++) {
+          const url = `./Pages/q (${j}).jpg`;
+          batch.push(
+            fetch(url)
+              .then((res) => {
+                if (res.ok) return cache.put(url, res);
+              })
+              .catch(() => {})
+          );
+        }
+        await Promise.all(batch);
+      }
     })
   );
   self.skipWaiting();
