@@ -1,0 +1,26 @@
+{
+  "name": "mushaf-shareif",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/engmo7med5aled06-cell/mushaf-shareif.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/engmo7med5aled06-cell/mushaf-shareif/issues"
+  },
+  "homepage": "https://github.com/engmo7med5aled06-cell/mushaf-shareif#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2"
+  }
+}
