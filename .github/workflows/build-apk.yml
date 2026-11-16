@@ -18,10 +18,13 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Update Capacitor Android
+      - name: Prepare Web Files and Android Project
         run: |
+          rm -rf android www
           mkdir -p www
-          npx cap update android
+          cp -r Pages index.html style.css app.js manifest.json sw.js icon.png www/
+          npx cap add android
+          npx cap sync android
 
       - name: Setup Java JDK
         uses: actions/setup-java@v4
