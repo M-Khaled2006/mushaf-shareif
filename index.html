@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- iOS Fullscreen & Safari Compatibility -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="المصحف الشريف">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <!-- Android / PWA Theme -->
+    <meta name="theme-color" content="#121212">
+    <link rel="manifest" href="manifest.json">
+
+    <title>المصحف الشريف</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- قارئ القرآن -->
+    <main id="reader-container" class="horizontal-mode">
+        <!-- يتم توليد الصفحات ديناميكياً هنا -->
+    </main>
+
+    <!-- إشعار الجزء الانتقالي -->
+    <div id="juz-toast" class="toast hidden"></div>
+
+    <!-- الأزرار العائمة (تظهر عند لمس الشاشة) -->
+    <div id="floating-controls" class="floating-controls hidden">
+        <div class="top-bar">
+            <button id="btn-index" class="control-btn" title="الفهرس">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <span>الفهرس</span>
+            </button>
+            <div class="search-jump-box">
+                <input type="number" id="jump-input" min="1" max="604" placeholder="الصفحة (1-604)">
+                <button id="btn-jump">انتقال</button>
+            </div>
+            <button id="btn-mode" class="control-btn" title="وضع القراءة">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
+                <span id="mode-text">أفقي</span>
+            </button>
+        </div>
+        <div class="bottom-bar">
+            <span id="page-indicator">الصفحة: 1 / 604</span>
+        </div>
+    </div>
+
+    <!-- نافذة الفهرس المنبثقة -->
+    <div id="index-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>فهرس المصحف الشريف</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-target="surahs-list">السور (114)</button>
+                <button class="tab-btn" data-target="juz-list">الأجزاء (30)</button>
+                <button class="tab-btn" data-target="ayah-search">بحث في الآيات</button>
+            </div>
+            <div class="modal-search">
+                <input type="text" id="modal-search-input" placeholder="ابحث عن سورة...">
+            </div>
+            <div class="modal-body">
+                <div id="surahs-list" class="tab-content active"></div>
+                <div id="juz-list" class="tab-content"></div>
+                <div id="ayah-search" class="tab-content">
+                    <input type="text" id="ayah-search-input" placeholder="اكتب كلمة من الآية للبحث..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box;">
+                    <div id="ayah-search-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
