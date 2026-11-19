@@ -372,153 +372,21 @@ function populateIndex() {
     });
 
 }
-// دعم التكبير بالنقر المزدوج (Double Tap)
-let lastTapTime = 0;
-readerContainer.addEventListener('touchend', (e) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTime;
 
-    if (tapLength < 300 && tapLength > 0) {
-        const img = e.target.closest('.page-slide')?.querySelector('img');
-        if (img) {
-            if (img.style.transform === 'scale(1.8)') {
-                img.style.transform = 'scale(1)';
-                img.style.transformOrigin = 'center center';
-            } else {
-                const rect = img.getBoundingClientRect();
-                const x = ((e.changedTouches[0].clientX - rect.left) / rect.width) * 100;
-                const y = ((e.changedTouches[0].clientY - rect.top) / rect.height) * 100;
-                img.style.transformOrigin = `${x}% ${y}%`;
-                img.style.transform = 'scale(1.8)';
-            }
+// ==========================================
+// 1. الانتقال للصفحة بالضغط على Enter + نظام الزوم السريع
+// ==========================================
+const jumpInputField = document.getElementById('jump-input');
+if (jumpInputField) {
+    jumpInputField.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const btnJump = document.getElementById('btn-jump');
+            if (btnJump) btnJump.click();
+            jumpInputField.blur();
         }
-        e.preventDefault();
-    }
-    lastTapTime = currentTime;
-});
-// --- نظام الزوم النهائي لصفحات المصحف والتفسير (متوافق مع وضع Fit) ---
-(function() {
-    const reader = document.getElementById('reader-container');
-    let activeImg = null;
-    let scale = 1, lastScale = 1;
-    let startX = 0, startY = 0, translateX = 0, translateY = 0;
-    let initialDistance = 0;
-    let lastTap = 0;
-
-    function resetZoom(img) {
-        if (!img) return;
-        scale = 1;
-        translateX = 0;
-        translateY = 0;
-        img.style.transition = 'transform 0.2s ease-out';
-        img.style.transform = 'translate(0px, 0px) scale(1)';
-        img.classList.remove('zoomed');
-    }
-
-    // منع خروج أطراف الصفحة عن حدود الشاشة أثناء السحب
-    function clampTranslation(img) {
-        const rect = img.getBoundingClientRect();
-        const baseWidth = rect.width / scale;
-        const baseHeight = rect.height / scale;
-
-        const maxX = Math.max(0, (baseWidth * scale - window.innerWidth) / 2);
-        const maxY = Math.max(0, (baseHeight * scale - window.innerHeight) / 2);
-
-        translateX = Math.min(Math.max(translateX, -maxX), maxX);
-        translateY = Math.min(Math.max(translateY, -maxY), maxY);
-    }
-
-    function applyTransform(img, smooth = false) {
-        img.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
-        if (scale > 1) {
-            clampTranslation(img);
-            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-            img.classList.add('zoomed');
-        } else {
-            resetZoom(img);
-        }
-    }
-
-    // 1. التكبير والعودة لوضع Fit بالضغط مرتين (Double Tap)
-    reader.addEventListener('touchend', (e) => {
-        if (e.target.tagName !== 'IMG') return;
-        const img = e.target;
-
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTap;
-        if (tapLength < 300 && tapLength > 0) {
-            if (activeImg && activeImg !== img) resetZoom(activeImg);
-            activeImg = img;
-
-            if (scale > 1) {
-                resetZoom(img); // عودة لوضع Fit
-            } else {
-                scale = 2.5; // تكبير مثالي لقراءة التفسير الجانبي والسفلي بوضوح
-                translateX = 0;
-                translateY = 0;
-                applyTransform(img, true);
-            }
-            e.preventDefault();
-        }
-        lastTap = currentTime;
     });
+}
 
-    // 2. بداية اللمس (إصبع واحد للسحب أو إصبعين للتكبير)
-    reader.addEventListener('touchstart', (e) => {
-        if (e.target.tagName !== 'IMG') return;
-        const img = e.target;
-
-        if (activeImg && activeImg !== img) {
-            resetZoom(activeImg);
-        }
-        activeImg = img;
-
-        if (e.touches.length === 2) {
-            initialDistance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-            lastScale = scale;
-        } else if (e.touches.length === 1 && scale > 1) {
-            startX = e.touches[0].pageX - translateX;
-            startY = e.touches[0].pageY - translateY;
-        }
-    }, { passive: false });
-
-    // 3. أثناء تحريك الأصابع
-    reader.addEventListener('touchmove', (e) => {
-        if (!activeImg || e.target !== activeImg) return;
-
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-            // الحد الأقصى للتكبير 4 أضعاف
-            scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
-            applyTransform(activeImg, false);
-        } else if (e.touches.length === 1 && scale > 1) {
-            e.preventDefault();
-            translateX = e.touches[0].pageX - startX;
-            translateY = e.touches[0].pageY - startY;
-            applyTransform(activeImg, false);
-        }
-    }, { passive: false });
-
-    // 4. إعادة ضبط الزوم تلقائياً عند تقليب الصفحة
-    reader.addEventListener('scroll', () => {
-        if (activeImg && scale > 1) {
-            const rect = activeImg.getBoundingClientRect();
-            if (rect.right < 10 || rect.left > window.innerWidth - 10 || rect.bottom < 10 || rect.top > window.innerHeight - 10) {
-                resetZoom(activeImg);
-            }
-        }
-    }, { passive: true });
-})();
-// ==========================================
-// 1. نظام الزوم الذكي لصفحات المصحف والتفسير
-// ==========================================
 (function() {
     const reader = document.getElementById('reader-container');
     let activeImg = null;
@@ -531,8 +399,10 @@ readerContainer.addEventListener('touchend', (e) => {
         if (!img) return;
         scale = 1; translateX = 0; translateY = 0;
         img.style.transition = 'transform 0.2s ease-out';
-        img.style.transform = 'translate(0px, 0px) scale(1)';
+        img.style.transform = 'translate3d(0px, 0px, 0px) scale(1)';
         img.classList.remove('zoomed');
+        reader.style.overflowX = '';
+        reader.style.overflowY = '';
     }
 
     function clampTranslation(img) {
@@ -547,77 +417,77 @@ readerContainer.addEventListener('touchend', (e) => {
 
     function applyTransform(img, smooth = false) {
         img.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
-        if (scale > 1) {
+        if (scale > 1.05) {
             clampTranslation(img);
-            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scale})`;
             img.classList.add('zoomed');
+            reader.style.overflowX = 'hidden';
+            reader.style.overflowY = 'hidden';
         } else {
             resetZoom(img);
         }
     }
 
+    // النقر المزدوج (Double Tap) للتكبير والعودة
     reader.addEventListener('touchend', (e) => {
         if (e.target.tagName !== 'IMG') return;
         const img = e.target;
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTap;
-        if (tapLength < 300 && tapLength > 0) {
+        const now = Date.now();
+        if (now - lastTap < 280 && now - lastTap > 0) {
             if (activeImg && activeImg !== img) resetZoom(activeImg);
             activeImg = img;
             if (scale > 1) {
                 resetZoom(img);
             } else {
-                scale = 2.5; translateX = 0; translateY = 0;
+                scale = 2.4;
+                translateX = 0;
+                translateY = 0;
                 applyTransform(img, true);
             }
             e.preventDefault();
         }
-        lastTap = currentTime;
+        lastTap = now;
     });
 
+    // بداية اللمس بإصبع أو إصبعين
     reader.addEventListener('touchstart', (e) => {
         if (e.target.tagName !== 'IMG') return;
         const img = e.target;
         if (activeImg && activeImg !== img) resetZoom(activeImg);
         activeImg = img;
+
         if (e.touches.length === 2) {
-            initialDistance = Math.hypot(
-                e.touches.pageX - e.touches.pageX,
-                e.touches.pageY - e.touches.pageY
-            );
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            initialDistance = Math.hypot(dx, dy);
             lastScale = scale;
         } else if (e.touches.length === 1 && scale > 1) {
-            startX = e.touches.pageX - translateX;
-            startY = e.touches.pageY - translateY;
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
         }
     }, { passive: false });
 
+    // التحريك والتكبير الفوري
     reader.addEventListener('touchmove', (e) => {
         if (!activeImg || e.target !== activeImg) return;
+
         if (e.touches.length === 2) {
             e.preventDefault();
-            const currentDistance = Math.hypot(
-                e.touches.pageX - e.touches.pageX,
-                e.touches.pageY - e.touches.pageY
-            );
-            scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
-            applyTransform(activeImg, false);
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const currentDistance = Math.hypot(dx, dy);
+            if (initialDistance > 0) {
+                scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
+                applyTransform(activeImg, false);
+            }
         } else if (e.touches.length === 1 && scale > 1) {
             e.preventDefault();
-            translateX = e.touches.pageX - startX;
-            translateY = e.touches.pageY - startY;
+            e.stopPropagation();
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
             applyTransform(activeImg, false);
         }
     }, { passive: false });
-
-    reader.addEventListener('scroll', () => {
-        if (activeImg && scale > 1) {
-            const rect = activeImg.getBoundingClientRect();
-            if (rect.right < 10 || rect.left > window.innerWidth - 10 || rect.bottom < 10 || rect.top > window.innerHeight - 10) {
-                resetZoom(activeImg);
-            }
-        }
-    }, { passive: true });
 })();
 
 // ==========================================
