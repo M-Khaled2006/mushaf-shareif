@@ -366,3 +366,16 @@ html, body {
     border-radius: 14px !important;
     z-index: 1005 !important;
 }
+/* ضبط الصفحة لتظهر كاملة 100% داخل المتصفح والتطبيق بدون قص من الأسفل */
+html, body, #reader-container,
+#reader-container.horizontal-mode .page-slide,
+#reader-container.vertical-mode .page-slide {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+}
+
+.page-slide img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
