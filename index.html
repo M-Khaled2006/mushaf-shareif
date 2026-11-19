@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=4.0, user-scalable=yes, viewport-fit=cover">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
     <!-- iOS Fullscreen & Safari Compatibility -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -58,6 +58,7 @@
             <div class="modal-tabs">
                 <button class="tab-btn active" data-target="surahs-list">السور (114)</button>
                 <button class="tab-btn" data-target="juz-list">الأجزاء (30)</button>
+                <button class="tab-btn" data-target="ayah-search">بحث في الآيات</button>
             </div>
             <div class="modal-search">
                 <input type="text" id="modal-search-input" placeholder="ابحث عن سورة...">
@@ -65,6 +66,10 @@
             <div class="modal-body">
                 <div id="surahs-list" class="tab-content active"></div>
                 <div id="juz-list" class="tab-content"></div>
+                <div id="ayah-search" class="tab-content">
+                    <input type="text" id="ayah-search-input" placeholder="اكتب كلمة من الآية للبحث..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box;">
+                    <div id="ayah-search-results"></div>
+                </div>
             </div>
         </div>
     </div>

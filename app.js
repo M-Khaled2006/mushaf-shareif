@@ -396,3 +396,301 @@ readerContainer.addEventListener('touchend', (e) => {
     }
     lastTapTime = currentTime;
 });
+// --- نظام الزوم النهائي لصفحات المصحف والتفسير (متوافق مع وضع Fit) ---
+(function() {
+    const reader = document.getElementById('reader-container');
+    let activeImg = null;
+    let scale = 1, lastScale = 1;
+    let startX = 0, startY = 0, translateX = 0, translateY = 0;
+    let initialDistance = 0;
+    let lastTap = 0;
+
+    function resetZoom(img) {
+        if (!img) return;
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        img.style.transition = 'transform 0.2s ease-out';
+        img.style.transform = 'translate(0px, 0px) scale(1)';
+        img.classList.remove('zoomed');
+    }
+
+    // منع خروج أطراف الصفحة عن حدود الشاشة أثناء السحب
+    function clampTranslation(img) {
+        const rect = img.getBoundingClientRect();
+        const baseWidth = rect.width / scale;
+        const baseHeight = rect.height / scale;
+
+        const maxX = Math.max(0, (baseWidth * scale - window.innerWidth) / 2);
+        const maxY = Math.max(0, (baseHeight * scale - window.innerHeight) / 2);
+
+        translateX = Math.min(Math.max(translateX, -maxX), maxX);
+        translateY = Math.min(Math.max(translateY, -maxY), maxY);
+    }
+
+    function applyTransform(img, smooth = false) {
+        img.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
+        if (scale > 1) {
+            clampTranslation(img);
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            img.classList.add('zoomed');
+        } else {
+            resetZoom(img);
+        }
+    }
+
+    // 1. التكبير والعودة لوضع Fit بالضغط مرتين (Double Tap)
+    reader.addEventListener('touchend', (e) => {
+        if (e.target.tagName !== 'IMG') return;
+        const img = e.target;
+
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            if (activeImg && activeImg !== img) resetZoom(activeImg);
+            activeImg = img;
+
+            if (scale > 1) {
+                resetZoom(img); // عودة لوضع Fit
+            } else {
+                scale = 2.5; // تكبير مثالي لقراءة التفسير الجانبي والسفلي بوضوح
+                translateX = 0;
+                translateY = 0;
+                applyTransform(img, true);
+            }
+            e.preventDefault();
+        }
+        lastTap = currentTime;
+    });
+
+    // 2. بداية اللمس (إصبع واحد للسحب أو إصبعين للتكبير)
+    reader.addEventListener('touchstart', (e) => {
+        if (e.target.tagName !== 'IMG') return;
+        const img = e.target;
+
+        if (activeImg && activeImg !== img) {
+            resetZoom(activeImg);
+        }
+        activeImg = img;
+
+        if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            lastScale = scale;
+        } else if (e.touches.length === 1 && scale > 1) {
+            startX = e.touches[0].pageX - translateX;
+            startY = e.touches[0].pageY - translateY;
+        }
+    }, { passive: false });
+
+    // 3. أثناء تحريك الأصابع
+    reader.addEventListener('touchmove', (e) => {
+        if (!activeImg || e.target !== activeImg) return;
+
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            // الحد الأقصى للتكبير 4 أضعاف
+            scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
+            applyTransform(activeImg, false);
+        } else if (e.touches.length === 1 && scale > 1) {
+            e.preventDefault();
+            translateX = e.touches[0].pageX - startX;
+            translateY = e.touches[0].pageY - startY;
+            applyTransform(activeImg, false);
+        }
+    }, { passive: false });
+
+    // 4. إعادة ضبط الزوم تلقائياً عند تقليب الصفحة
+    reader.addEventListener('scroll', () => {
+        if (activeImg && scale > 1) {
+            const rect = activeImg.getBoundingClientRect();
+            if (rect.right < 10 || rect.left > window.innerWidth - 10 || rect.bottom < 10 || rect.top > window.innerHeight - 10) {
+                resetZoom(activeImg);
+            }
+        }
+    }, { passive: true });
+})();
+// ==========================================
+// 1. نظام الزوم الذكي لصفحات المصحف والتفسير
+// ==========================================
+(function() {
+    const reader = document.getElementById('reader-container');
+    let activeImg = null;
+    let scale = 1, lastScale = 1;
+    let startX = 0, startY = 0, translateX = 0, translateY = 0;
+    let initialDistance = 0;
+    let lastTap = 0;
+
+    function resetZoom(img) {
+        if (!img) return;
+        scale = 1; translateX = 0; translateY = 0;
+        img.style.transition = 'transform 0.2s ease-out';
+        img.style.transform = 'translate(0px, 0px) scale(1)';
+        img.classList.remove('zoomed');
+    }
+
+    function clampTranslation(img) {
+        const rect = img.getBoundingClientRect();
+        const baseWidth = rect.width / scale;
+        const baseHeight = rect.height / scale;
+        const maxX = Math.max(0, (baseWidth * scale - window.innerWidth) / 2);
+        const maxY = Math.max(0, (baseHeight * scale - window.innerHeight) / 2);
+        translateX = Math.min(Math.max(translateX, -maxX), maxX);
+        translateY = Math.min(Math.max(translateY, -maxY), maxY);
+    }
+
+    function applyTransform(img, smooth = false) {
+        img.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
+        if (scale > 1) {
+            clampTranslation(img);
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            img.classList.add('zoomed');
+        } else {
+            resetZoom(img);
+        }
+    }
+
+    reader.addEventListener('touchend', (e) => {
+        if (e.target.tagName !== 'IMG') return;
+        const img = e.target;
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            if (activeImg && activeImg !== img) resetZoom(activeImg);
+            activeImg = img;
+            if (scale > 1) {
+                resetZoom(img);
+            } else {
+                scale = 2.5; translateX = 0; translateY = 0;
+                applyTransform(img, true);
+            }
+            e.preventDefault();
+        }
+        lastTap = currentTime;
+    });
+
+    reader.addEventListener('touchstart', (e) => {
+        if (e.target.tagName !== 'IMG') return;
+        const img = e.target;
+        if (activeImg && activeImg !== img) resetZoom(activeImg);
+        activeImg = img;
+        if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+                e.touches.pageX - e.touches.pageX,
+                e.touches.pageY - e.touches.pageY
+            );
+            lastScale = scale;
+        } else if (e.touches.length === 1 && scale > 1) {
+            startX = e.touches.pageX - translateX;
+            startY = e.touches.pageY - translateY;
+        }
+    }, { passive: false });
+
+    reader.addEventListener('touchmove', (e) => {
+        if (!activeImg || e.target !== activeImg) return;
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(
+                e.touches.pageX - e.touches.pageX,
+                e.touches.pageY - e.touches.pageY
+            );
+            scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
+            applyTransform(activeImg, false);
+        } else if (e.touches.length === 1 && scale > 1) {
+            e.preventDefault();
+            translateX = e.touches.pageX - startX;
+            translateY = e.touches.pageY - startY;
+            applyTransform(activeImg, false);
+        }
+    }, { passive: false });
+
+    reader.addEventListener('scroll', () => {
+        if (activeImg && scale > 1) {
+            const rect = activeImg.getBoundingClientRect();
+            if (rect.right < 10 || rect.left > window.innerWidth - 10 || rect.bottom < 10 || rect.top > window.innerHeight - 10) {
+                resetZoom(activeImg);
+            }
+        }
+    }, { passive: true });
+})();
+
+// ==========================================
+// 2. نظام البحث الفوري في الآيات
+// ==========================================
+let allAyahs = [];
+
+fetch('./quran-data.json')
+    .then(res => res.json())
+    .then(surahs => {
+        surahs.forEach(surah => {
+            surah.verses.forEach(ayah => {
+                allAyahs.push({
+                    text: ayah.text.ar,
+                    surahName: surah.name.ar,
+                    numberInSurah: ayah.number,
+                    page: ayah.page
+                });
+            });
+        });
+    })
+    .catch(err => console.log('خطأ في تحميل ملف البحث:', err));
+
+function cleanText(str) {
+    return str
+        .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ة/g, 'ه');
+}
+
+const ayahInput = document.getElementById('ayah-search-input');
+const ayahResults = document.getElementById('ayah-search-results');
+
+// إخفاء مربع بحث السور القديم تلقائياً عند فتح تبويب بحث الآيات
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const surahSearchBox = document.querySelector('.modal-search');
+        if (surahSearchBox) {
+            surahSearchBox.style.display = (btn.dataset.target === 'ayah-search') ? 'none' : 'block';
+        }
+    });
+});
+
+if (ayahInput) {
+    ayahInput.addEventListener('input', function() {
+        const keyword = cleanText(this.value.trim());
+        ayahResults.innerHTML = '';
+        if (keyword.length < 3) return;
+
+        const found = allAyahs.filter(item => cleanText(item.text).includes(keyword)).slice(0, 40);
+
+        if (found.length === 0) {
+            ayahResults.innerHTML = '<p style="text-align:center; padding:15px; color:#aaa;">لا توجد نتائج</p>';
+            return;
+        }
+
+        found.forEach(item => {
+            const card = document.createElement('div');
+            card.style.cssText = 'padding: 12px; border-bottom: 1px solid #333; cursor: pointer;';
+            card.innerHTML = `
+                <div style="font-size: 16px; margin-bottom: 5px; line-height: 1.6;">${item.text}</div>
+                <div style="font-size: 12px; color: #4caf50;">سورة ${item.surahName} - آية (${item.numberInSurah}) | صفحة ${item.page}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                document.getElementById('jump-input').value = item.page;
+                document.getElementById('btn-jump').click();
+                document.getElementById('index-modal').classList.add('hidden');
+            });
+
+            ayahResults.appendChild(card);
+        });
+    });
+}
+

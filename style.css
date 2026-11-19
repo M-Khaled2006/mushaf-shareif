@@ -40,6 +40,7 @@ html, body {
     align-items: center;
     justify-content: center;
     background-color: #ffffff;
+    overflow: hidden;
 }
 
 #reader-container.vertical-mode {
@@ -56,6 +57,7 @@ html, body {
     justify-content: center;
     background-color: #ffffff;
     margin-bottom: 0;
+    overflow: hidden;
 }
 
 .page-slide img {
@@ -63,10 +65,16 @@ html, body {
     height: 100%;
     object-fit: fill;
     user-select: none;
-    touch-action: pan-x pan-y pinch-zoom;
-    transition: transform 0.2s ease;
+    transform-origin: center center;
+    touch-action: pan-x pan-y;
+    will-change: transform;
 }
 
+.page-slide img.zoomed {
+    touch-action: none;
+    z-index: 10;
+    position: relative;
+}
 
 .floating-controls {
     position: fixed;
@@ -317,4 +325,14 @@ html, body {
 .index-item .page-num {
     color: #38bdf8;
     font-weight: 600;
+}
+
+#ayah-search-results div {
+    color: #e4e4e7;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#ayah-search-results div:hover {
+    background: rgba(255, 255, 255, 0.05);
 }

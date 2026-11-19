@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-pwa-v22';
+const CACHE_NAME = 'quran-pwa-v24';
 const TOTAL_PAGES = 604;
 
 const CORE_ASSETS = [
@@ -7,7 +7,8 @@ const CORE_ASSETS = [
   './style.css',
   './app.js',
   './manifest.json',
-  './icon.png'
+  './icon.png',
+  './quran-data.json'
 ];
 
 self.addEventListener('install', (event) => {
