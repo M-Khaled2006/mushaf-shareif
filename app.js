@@ -693,4 +693,22 @@ if (ayahInput) {
         });
     });
 }
+// --- تفعيل زر البحث الخارجي في الشريط العلوي ---
+const btnSearchMain = document.getElementById('btn-search-main');
+if (btnSearchMain) {
+    btnSearchMain.addEventListener('click', () => {
+        // 1. فتح نافذة الفهرس
+        document.getElementById('index-modal').classList.remove('hidden');
+        
+        // 2. الضغط برمجياً على تبويب "بحث في الآيات"
+        const searchTabBtn = document.querySelector('.tab-btn[data-target="ayah-search"]');
+        if (searchTabBtn) searchTabBtn.click();
+        
+        // 3. وضع مؤشر الكتابة داخل مربع البحث فوراً
+        setTimeout(() => {
+            const input = document.getElementById('ayah-search-input');
+            if (input) input.focus();
+        }, 100);
+    });
+}
 
