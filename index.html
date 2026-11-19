@@ -29,23 +29,25 @@
 
     <!-- الأزرار العائمة (تظهر عند لمس الشاشة) -->
     <div id="floating-controls" class="floating-controls hidden">
-        <div class="top-bar">
-            <button id="btn-index" class="control-btn" title="الفهرس">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                <span>الفهرس</span>
-            </button>
-            <div class="search-jump-box">
-                <input type="number" id="jump-input" min="1" max="604" placeholder="الصفحة (1-604)">
-                <button id="btn-jump">انتقال</button>
-            </div>
-            <button id="btn-mode" class="control-btn" title="وضع القراءة">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
-                <span id="mode-text">أفقي</span>
-            </button>
-        </div>
-        <div class="bottom-bar">
-            <span id="page-indicator">الصفحة: 1 / 604</span>
-        </div>
+    <div class="top-bar">
+    <button id="btn-index" class="control-btn" title="الفهرس">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <span>الفهرس</span>
+    </button>
+    <button id="btn-search-main" class="control-btn" title="بحث في الآيات">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>بحث</span>
+    </button>
+    <div class="search-jump-box">
+        <input type="number" id="jump-input" min="1" max="604" placeholder="الصفحة">
+        <button id="btn-jump">انتقال</button>
+    </div>
+    <button id="btn-mode" class="control-btn" title="وضع القراءة">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line></svg>
+        <span id="mode-text">أفقي</span>
+    </button>
+</div>
+
     </div>
 
     <!-- نافذة الفهرس المنبثقة -->
