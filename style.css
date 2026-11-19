@@ -336,3 +336,33 @@ html, body {
 #ayah-search-results div:hover {
     background: rgba(255, 255, 255, 0.05);
 }
+/* تعديلات الشريط العلوي وإرجاع رقم الصفحة السفلي */
+.top-bar {
+    position: fixed !important;
+    top: max(12px, env(safe-area-inset-top)) !important;
+    left: 12px !important;
+    right: 12px !important;
+    gap: 4px !important;
+    padding: 8px 10px !important;
+}
+
+.search-jump-box input {
+    width: 65px !important;
+    min-width: 60px !important;
+}
+
+#btn-jump {
+    display: none !important;
+}
+
+.bottom-bar {
+    position: fixed !important;
+    bottom: 25px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(38, 38, 38, 0.92) !important;
+    color: #fff !important;
+    padding: 10px 22px !important;
+    border-radius: 14px !important;
+    z-index: 1005 !important;
+}
