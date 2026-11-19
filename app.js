@@ -372,9 +372,8 @@ function populateIndex() {
     });
 
 }
-
 // ==========================================
-// 1. الانتقال للصفحة بالضغط على Enter + نظام الزوم السريع
+// 1. الانتقال بالـ Enter + ربط مربع البحث العلوي
 // ==========================================
 const jumpInputField = document.getElementById('jump-input');
 if (jumpInputField) {
@@ -387,18 +386,38 @@ if (jumpInputField) {
     });
 }
 
+const topAyahInput = document.getElementById('top-ayah-input');
+if (topAyahInput) {
+    topAyahInput.addEventListener('focus', () => {
+        document.getElementById('index-modal').classList.remove('hidden');
+        const searchTabBtn = document.querySelector('.tab-btn[data-target="ayah-search"]');
+        if (searchTabBtn) searchTabBtn.click();
+        
+        const modalAyahInput = document.getElementById('ayah-search-input');
+        if (modalAyahInput) {
+            modalAyahInput.value = topAyahInput.value;
+            modalAyahInput.focus();
+        }
+    });
+}
+
+// ==========================================
+// 2. نظام الزوم بالنقر مرتين فقط (Double Tap) والتحريك بإصبع واحد
+// ==========================================
 (function() {
     const reader = document.getElementById('reader-container');
     let activeImg = null;
-    let scale = 1, lastScale = 1;
+    let isZoomed = false;
+    const ZOOM_SCALE = 2.4;
     let startX = 0, startY = 0, translateX = 0, translateY = 0;
-    let initialDistance = 0;
     let lastTap = 0;
 
     function resetZoom(img) {
         if (!img) return;
-        scale = 1; translateX = 0; translateY = 0;
-        img.style.transition = 'transform 0.2s ease-out';
+        isZoomed = false;
+        translateX = 0;
+        translateY = 0;
+        img.style.transition = 'transform 0.25s ease-out';
         img.style.transform = 'translate3d(0px, 0px, 0px) scale(1)';
         img.classList.remove('zoomed');
         reader.style.overflowX = '';
@@ -407,91 +426,62 @@ if (jumpInputField) {
 
     function clampTranslation(img) {
         const rect = img.getBoundingClientRect();
-        const baseWidth = rect.width / scale;
-        const baseHeight = rect.height / scale;
-        const maxX = Math.max(0, (baseWidth * scale - window.innerWidth) / 2);
-        const maxY = Math.max(0, (baseHeight * scale - window.innerHeight) / 2);
+        const baseWidth = rect.width / ZOOM_SCALE;
+        const baseHeight = rect.height / ZOOM_SCALE;
+        const maxX = Math.max(0, (baseWidth * ZOOM_SCALE - window.innerWidth) / 2);
+        const maxY = Math.max(0, (baseHeight * ZOOM_SCALE - window.innerHeight) / 2);
         translateX = Math.min(Math.max(translateX, -maxX), maxX);
         translateY = Math.min(Math.max(translateY, -maxY), maxY);
     }
 
-    function applyTransform(img, smooth = false) {
-        img.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
-        if (scale > 1.05) {
-            clampTranslation(img);
-            img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scale})`;
-            img.classList.add('zoomed');
-            reader.style.overflowX = 'hidden';
-            reader.style.overflowY = 'hidden';
-        } else {
-            resetZoom(img);
-        }
-    }
-
-    // النقر المزدوج (Double Tap) للتكبير والعودة
+    // النقر مرتين فقط للتكبير والعودة
     reader.addEventListener('touchend', (e) => {
         if (e.target.tagName !== 'IMG') return;
         const img = e.target;
         const now = Date.now();
-        if (now - lastTap < 280 && now - lastTap > 0) {
+
+        if (now - lastTap < 300 && now - lastTap > 0) {
             if (activeImg && activeImg !== img) resetZoom(activeImg);
             activeImg = img;
-            if (scale > 1) {
+
+            if (isZoomed) {
                 resetZoom(img);
             } else {
-                scale = 2.4;
+                isZoomed = true;
                 translateX = 0;
                 translateY = 0;
-                applyTransform(img, true);
+                img.style.transition = 'transform 0.25s ease-out';
+                img.style.transform = `translate3d(0px, 0px, 0px) scale(${ZOOM_SCALE})`;
+                img.classList.add('zoomed');
+                reader.style.overflowX = 'hidden';
+                reader.style.overflowY = 'hidden';
             }
             e.preventDefault();
         }
         lastTap = now;
     });
 
-    // بداية اللمس بإصبع أو إصبعين
+    // تحريك الصفحة بإصبع واحد أثناء التكبير فقط
     reader.addEventListener('touchstart', (e) => {
-        if (e.target.tagName !== 'IMG') return;
-        const img = e.target;
-        if (activeImg && activeImg !== img) resetZoom(activeImg);
-        activeImg = img;
+        if (!isZoomed || e.target !== activeImg || e.touches.length !== 1) return;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+    }, { passive: true });
 
-        if (e.touches.length === 2) {
-            const dx = e.touches[0].clientX - e.touches[1].clientX;
-            const dy = e.touches[0].clientY - e.touches[1].clientY;
-            initialDistance = Math.hypot(dx, dy);
-            lastScale = scale;
-        } else if (e.touches.length === 1 && scale > 1) {
-            startX = e.touches[0].clientX - translateX;
-            startY = e.touches[0].clientY - translateY;
-        }
-    }, { passive: false });
-
-    // التحريك والتكبير الفوري
     reader.addEventListener('touchmove', (e) => {
-        if (!activeImg || e.target !== activeImg) return;
-
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const dx = e.touches[0].clientX - e.touches[1].clientX;
-            const dy = e.touches[0].clientY - e.touches[1].clientY;
-            const currentDistance = Math.hypot(dx, dy);
-            if (initialDistance > 0) {
-                scale = Math.min(Math.max(1, lastScale * (currentDistance / initialDistance)), 4.0);
-                applyTransform(activeImg, false);
-            }
-        } else if (e.touches.length === 1 && scale > 1) {
-            e.preventDefault();
-            e.stopPropagation();
-            translateX = e.touches[0].clientX - startX;
-            translateY = e.touches[0].clientY - startY;
-            applyTransform(activeImg, false);
-        }
+        if (!isZoomed || e.target !== activeImg || e.touches.length !== 1) return;
+        e.preventDefault();
+        e.stopPropagation();
+        activeImg.style.transition = 'none';
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+        clampTranslation(activeImg);
+        activeImg.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) scale(${ZOOM_SCALE})`;
     }, { passive: false });
 })();
 
 // ==========================================
-// 2. نظام البحث الفوري في الآيات
+// 3. نظام البحث الفوري في الآيات
 // ==========================================
 let allAyahs = [];
 
@@ -522,7 +512,6 @@ function cleanText(str) {
 const ayahInput = document.getElementById('ayah-search-input');
 const ayahResults = document.getElementById('ayah-search-results');
 
-// إخفاء مربع بحث السور القديم تلقائياً عند فتح تبويب بحث الآيات
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const surahSearchBox = document.querySelector('.modal-search');
@@ -550,7 +539,7 @@ if (ayahInput) {
             card.style.cssText = 'padding: 12px; border-bottom: 1px solid #333; cursor: pointer;';
             card.innerHTML = `
                 <div style="font-size: 16px; margin-bottom: 5px; line-height: 1.6;">${item.text}</div>
-                <div style="font-size: 12px; color: #4caf50;">سورة ${item.surahName} - آية (${item.numberInSurah}) | صفحة ${item.page}</div>
+                <div style="font-size: 12px; color: #38bdf8;">سورة ${item.surahName} - آية (${item.numberInSurah}) | صفحة ${item.page}</div>
             `;
 
             card.addEventListener('click', () => {
@@ -563,22 +552,3 @@ if (ayahInput) {
         });
     });
 }
-// --- تفعيل زر البحث الخارجي في الشريط العلوي ---
-const btnSearchMain = document.getElementById('btn-search-main');
-if (btnSearchMain) {
-    btnSearchMain.addEventListener('click', () => {
-        // 1. فتح نافذة الفهرس
-        document.getElementById('index-modal').classList.remove('hidden');
-        
-        // 2. الضغط برمجياً على تبويب "بحث في الآيات"
-        const searchTabBtn = document.querySelector('.tab-btn[data-target="ayah-search"]');
-        if (searchTabBtn) searchTabBtn.click();
-        
-        // 3. وضع مؤشر الكتابة داخل مربع البحث فوراً
-        setTimeout(() => {
-            const input = document.getElementById('ayah-search-input');
-            if (input) input.focus();
-        }, 100);
-    });
-}
-
