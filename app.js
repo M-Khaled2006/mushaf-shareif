@@ -587,12 +587,20 @@ if (ayahInput) {
         observer.observe(pageIndicator, { childList: true, characterData: true, subtree: true });
     }
 
-    // عند الضغط على "حفظ علامة"
+     // عند الضغط على "حفظ علامة" (حفظ أو إزالة)
     if (btnSave) {
         btnSave.addEventListener('click', (e) => {
             e.stopPropagation();
             const currentPage = getCurrentPageNum();
-            localStorage.setItem(STORAGE_KEY, currentPage);
+            const savedPage = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+
+            if (savedPage === currentPage) {
+                // إذا كانت الصفحة محفوظة بالفعل، قم بإزالة العلامة
+                localStorage.removeItem(STORAGE_KEY);
+            } else {
+                // إذا لم تكن محفوظة أو كانت في صفحة أخرى، احفظ هذه الصفحة
+                localStorage.setItem(STORAGE_KEY, currentPage);
+            }
             updateBookmarkUI();
         });
     }
