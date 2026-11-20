@@ -321,3 +321,66 @@ html, body {
     color: #e4e4e7;
     border-radius: 8px;
 }
+/* ==========================================
+   تنسيق أزرار العلامة المرجعية في الأسفل
+   ========================================== */
+.bottom-controls-wrapper {
+    position: fixed;
+    bottom: max(22px, env(safe-area-inset-bottom));
+    left: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 1010;
+    transition: opacity 0.3s ease;
+}
+
+.floating-controls.hidden .bottom-controls-wrapper {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* إعادة ضبط bottom-bar ليتوسط بين الزرين دون تداخل */
+.bottom-controls-wrapper .bottom-bar {
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    pointer-events: auto;
+}
+
+.bookmark-btn {
+    pointer-events: auto;
+    background: rgba(24, 24, 27, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 8px 10px;
+    color: #f4f4f5;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    transition: all 0.2s ease;
+}
+
+/* لون زر "حفظ علامة" والنجمة عندما تكون الصفحة الحالية محفوظة */
+.bookmark-btn.saved {
+    background: rgba(234, 179, 8, 0.22);
+    border-color: #eab308;
+    color: #fde047;
+}
+
+.bookmark-btn.saved svg {
+    fill: #eab308;
+    stroke: #eab308;
+}
