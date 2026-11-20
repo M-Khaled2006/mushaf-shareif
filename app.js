@@ -552,3 +552,77 @@ if (ayahInput) {
         });
     });
 }
+// ==========================================
+// 4. نظام حفظ العلامة المرجعية والانتقال إليها
+// ==========================================
+(function() {
+    const btnSave = document.getElementById('btn-save-bookmark');
+    const btnGoto = document.getElementById('btn-goto-bookmark');
+    const pageIndicator = document.getElementById('page-indicator');
+    const STORAGE_KEY = 'quran_saved_bookmark';
+
+    // قراءة رقم الصفحة المعروضة حالياً من شريط المؤشر السفلي
+    function getCurrentPageNum() {
+        if (!pageIndicator) return 1;
+        const match = pageIndicator.textContent.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 1;
+    }
+
+    // تحديث لون زر "حفظ علامة" تلقائياً حسب الصفحة المعروضة
+    function updateBookmarkUI() {
+        if (!btnSave) return;
+        const savedPage = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+        const currentPage = getCurrentPageNum();
+
+        if (savedPage && savedPage === currentPage) {
+            btnSave.classList.add('saved'); // تلوين الزر والنجمة بالذهبي
+        } else {
+            btnSave.classList.remove('saved'); // إزالة اللون عن أي صفحة أخرى
+        }
+    }
+
+    // مراقبة تغيّر رقم الصفحة أثناء التقليب لتحديث حالة النجمة فوراً
+    if (pageIndicator) {
+        const observer = new MutationObserver(updateBookmarkUI);
+        observer.observe(pageIndicator, { childList: true, characterData: true, subtree: true });
+    }
+
+     // عند الضغط على "حفظ علامة" (حفظ أو إزالة)
+    if (btnSave) {
+        btnSave.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentPage = getCurrentPageNum();
+            const savedPage = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+
+            if (savedPage === currentPage) {
+                // إذا كانت الصفحة محفوظة بالفعل، قم بإزالة العلامة
+                localStorage.removeItem(STORAGE_KEY);
+            } else {
+                // إذا لم تكن محفوظة أو كانت في صفحة أخرى، احفظ هذه الصفحة
+                localStorage.setItem(STORAGE_KEY, currentPage);
+            }
+            updateBookmarkUI();
+        });
+    }
+
+    // عند الضغط على "الانتقال للعلامة"
+    if (btnGoto) {
+        btnGoto.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const savedPage = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+            if (savedPage && savedPage >= 1 && savedPage <= 604) {
+                const jumpInput = document.getElementById('jump-input');
+                const btnJump = document.getElementById('btn-jump');
+                if (jumpInput && btnJump) {
+                    jumpInput.value = savedPage;
+                    btnJump.click();
+                }
+            } else {
+                alert('لم تقم بحفظ أي علامة بعد');
+            }
+        });
+    }
+
+    // فحص الحالة عند فتح التطبيق
+    updateBookmarkUI();
+})();
