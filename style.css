@@ -384,3 +384,56 @@ html, body {
     fill: #eab308;
     stroke: #eab308;
 }
+/* ==========================================
+   Quran Zoom System
+   ========================================== */
+
+/* الوضع الأفقي أثناء التكبير */
+#reader-container.horizontal-mode.horizontal-zoomed {
+    overflow: hidden !important;
+    scroll-snap-type: none !important;
+}
+
+/* الصورة المكبرة في الوضع الأفقي */
+#reader-container.horizontal-mode .page-slide img.zoomed {
+    position: relative;
+    z-index: 10;
+    touch-action: none;
+    will-change: transform;
+}
+
+/* الوضع الرأسي أثناء التكبير */
+#reader-container.vertical-mode.vertical-zoomed {
+    direction: ltr !important;
+
+    overflow-x: auto !important;
+    overflow-y: scroll !important;
+
+    scroll-behavior: auto !important;
+    overflow-anchor: none !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    touch-action: pan-x pan-y;
+}
+
+/* تكبير أبعاد كل صفحة في الوضع الرأسي */
+#reader-container.vertical-mode.vertical-zoomed .page-slide {
+    width: calc(100% * var(--reader-zoom-scale, 2)) !important;
+
+    height: calc(100dvh * var(--reader-zoom-scale, 2)) !important;
+
+    flex: none;
+    overflow: hidden;
+}
+
+/* الصورة تملأ الصفحة المكبرة */
+#reader-container.vertical-mode.vertical-zoomed .page-slide img {
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: none !important;
+
+    transform: none !important;
+    touch-action: pan-x pan-y;
+}
